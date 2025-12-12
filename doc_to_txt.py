@@ -1,6 +1,8 @@
 from docx import Document
 import re
 import argparse
+from tqdm import tqdm
+
 
 # --------- HELPER FUNCTIONS ---------
 def clean_text(text):
@@ -42,8 +44,9 @@ def extract_doc_text(doc_path):
             if text:
                 full_text.append(f"[FOOTER REMOVED: {text}]")  # Optional: log removed footer
 
-    # ----- Extract main content -----
-    for para in doc.paragraphs:
+    # ----- Extract main content with progress bar -----
+    print("Extracting paragraphs...")
+    for para in tqdm(doc.paragraphs, desc="Paragraphs", unit="para"):
         text = para.text.strip()
         if text:
             # Optional: preserve heading levels
@@ -52,8 +55,9 @@ def extract_doc_text(doc_path):
                 text = f"\n=== Heading {level}: {text} ===\n"
             full_text.append(text)
 
-    # ----- Extract tables -----
-    for table in doc.tables:
+    # ----- Extract tables with progress bar -----
+    print("Extracting tables...")
+    for table in tqdm(doc.tables, desc="Tables", unit="table"):
         for row in table.rows:
             row_text = " | ".join(cell.text.strip() for cell in row.cells if cell.text.strip())
             if row_text:
@@ -64,9 +68,9 @@ def extract_doc_text(doc_path):
 
 # --------- MAIN ---------
 def main():
-    parser = argparse.ArgumentParser(description="Parse Confluence doc page to txt for RAG extraction")
-    parser.add_argument("--input", required=True, help="Input DOC/DOCx file")
-    parser.add_argument("--output", required=True, help="Output TXT file", default="output.txt")
+    parser = argparse.ArgumentParser(description="Parse Confluence DOCx page to txt for RAG extraction")
+    parser.add_argument("--input", required=True, help="Input DOCx file")
+    parser.add_argument("--output", help="Output TXT file", default="output.txt")
     args = parser.parse_args()
     
     text = extract_doc_text(args.input)

@@ -1,13 +1,13 @@
 # Confluence Extractor
 
-Extract relevant text from Confluence Doc pages for RAG implementations. 
+Extract relevant text from Confluence DOCx pages for RAG implementations. 
 
 ## Prerequisites
 
 Install required libraries:
 
 ```bash
-    pip install docx re argparse
+    pip install python-docx re argparse tqdm
 ```
 
 ## Run
